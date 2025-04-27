@@ -1,0 +1,222 @@
+package controller
+
+import (
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"{$project}{$module}common/db"
+	"{$project}{$module}model"
+	"{$project}{$module}parameter"
+	"{$project}{$module}response"
+	"{$project}{$module}transformer"
+)
+
+// list
+func {$ctl}List(c *gin.Context) {
+
+	req := &parameter.{$ctl}Req{}
+	if err := c.ShouldBind(req); err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.ParameterErrCode,
+			Msg:  response.ParameterErr,
+		})
+	}
+
+	data := make([]*model.{$model}, 0)
+	dbModel := db.Db.Model(&model.{$model}{})
+
+    // select fields
+    if req.Fields != "" {
+        dbModel.Select(strings.Split(req.Fields, ","))
+    }
+
+    // sort by field
+    if req.Sort != "" {
+        dbModel.Scopes(model.Sort(req.Sort))
+    }
+
+    // relates
+    if req.Relate != "" {
+        dbModel.Scopes(model.Relate(req.Relate))
+    }
+
+	paginationMeta := &response.Pagination{}
+	if req.Paginate {
+		dbModel.Scopes(model.Paginate(&req.Pagination, paginationMeta))
+	}
+
+	if err := dbModel.Find(&data).Error; err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.{$ctl}ErrCode,
+			Msg:  response.{$ctl}Err,
+		})
+		return
+	}
+
+	transforms := make([]*transformer.{$ctl}Transform, 0)
+	for _, v := range data {
+		transforms = append(transforms, transformer.{$ctl}Transformer(v))
+	}
+
+	if req.Paginate {
+		c.JSON(http.StatusOK, &response.CommonWithMetaRep{
+			Data: transforms,
+			Code: response.SuccessCode,
+			Msg:  response.Success,
+			Meta: paginationMeta,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, &response.CommonRep{
+		Data: transforms,
+		Code: response.SuccessCode,
+		Msg:  response.Success,
+	})
+}
+
+// item
+func {$ctl}Item(c *gin.Context) {
+
+	req := &parameter.{$ctl}Req{}
+	if err := c.ShouldBindUri(req); err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.ParameterErrCode,
+			Msg:  response.ParameterErr,
+		})
+	}
+
+	data := &model.{$model}{}
+
+	dbModel := db.Db.Model(data)
+
+    if req.Relate != "" {
+        dbModel.Scopes(model.Relate(req.Relate))
+    }
+
+    if err := dbModel.Where("id = ?", req.Id).First(data).Error; err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.{$ctl}ErrCode,
+			Msg:  response.{$ctl}Err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, &response.CommonRep{
+		Data: transformer.{$ctl}Transformer(data),
+		Code: response.SuccessCode,
+		Msg:  response.Success,
+	})
+}
+
+// create
+func {$ctl}Create(c *gin.Context) {
+
+	req := &parameter.{$ctl}Req{}
+	if err := c.ShouldBind(req); err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.ParameterErrCode,
+			Msg:  response.ParameterErr,
+		})
+	}
+
+	data := &model.{$model}{
+		// Fill fields...
+	}
+
+	if err := db.Db.Model(data).Create(data).Error; err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.{$ctl}CreateErrCode,
+			Msg:  response.{$ctl}CreateErr,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, &response.CommonRep{
+		Data: transformer.{$ctl}Transformer(data),
+		Code: response.SuccessCode,
+		Msg:  response.Success,
+	})
+}
+
+// update
+func {$ctl}Update(c *gin.Context) {
+
+	req := &parameter.{$ctl}Req{}
+	if err := c.ShouldBind(req); err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.ParameterErrCode,
+			Msg:  response.ParameterErr,
+		})
+	}
+
+	// bind uri
+	if err := c.ShouldBindUri(req); err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.ParameterErrCode,
+			Msg:  response.ParameterErr,
+		})
+	}
+
+	data := &model.{$model}{}
+
+	if err := db.Db.Model(data).Where("id = ?", req.Id).First(data).Error; err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.{$ctl}ErrCode,
+			Msg:  response.{$ctl}Err,
+		})
+		return
+	}
+
+	data.Username = req.Username
+	// other update fields ...
+
+	if err := db.Db.Model(data).Save(data).Error; err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.{$ctl}UpdateErrCode,
+			Msg:  response.{$ctl}UpdateErr,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, &response.CommonRep{
+		Data: transformer.{$ctl}Transformer(data),
+		Code: response.SuccessCode,
+		Msg:  response.Success,
+	})
+}
+
+// delete
+func {$ctl}Delete(c *gin.Context) {
+
+	req := &parameter.{$ctl}Req{}
+	if err := c.ShouldBindUri(req); err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.ParameterErrCode,
+			Msg:  response.ParameterErr,
+		})
+	}
+
+	data := &model.{$model}{}
+
+	if err := db.Db.Model(data).Where("id = ?", req.Id).First(data).Error; err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.{$ctl}ErrCode,
+			Msg:  response.{$ctl}Err,
+		})
+		return
+	}
+
+	if err := db.Db.Delete(data.Id, data).Error; err != nil {
+		c.JSON(http.StatusOK, &response.CommonRep{
+			Code: response.{$ctl}DeleteErrCode,
+			Msg:  response.{$ctl}DeleteErr,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, &response.CommonRep{
+		Code: response.SuccessCode,
+		Msg:  response.Success,
+	})
+
+}

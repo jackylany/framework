@@ -1,0 +1,25 @@
+package route
+
+import (
+	"github.com/gin-gonic/gin"
+	"{$project}{$module}controller"
+	"{$project}{$module}middleware"
+)
+
+func InitRoute(r *gin.Engine) {
+
+    // use middleware ...
+    // r.Use(middleware.Middleware())
+
+	// list
+	r.GET("/{$route}", controller.{$ctl}List)
+	// item
+	r.GET("/{$route}/:id", controller.{$ctl}Item)
+	// create
+	r.POST("/{$route}", controller.{$ctl}Create)
+	// update
+	r.PUT("/{$route}/:id", controller.{$ctl}Update)
+	// delete
+	r.DELETE("/{$route}/:id", controller.{$ctl}Delete)
+
+}

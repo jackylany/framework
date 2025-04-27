@@ -1,0 +1,40 @@
+package transformer
+
+import (
+	"{$project}{$module}model"
+	"time"
+)
+
+type {$ctl}Transform struct {
+    // has one transform
+    // Model      any    `json:""`
+    // has many transform
+    // Models     []any  `json:""`
+	Id        int    `json:"id"`
+    // other fields to transform ...
+    CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+func {$ctl}Transformer(d *model.{$model}) *{$ctl}Transform {
+
+	transform := &{$ctl}Transform{
+		Id:        d.Id,
+		CreatedAt: d.CreatedAt.Format(time.DateTime),
+		UpdatedAt: d.UpdatedAt.Format(time.DateTime),
+	}
+
+    // has one
+    /*if d.Model.Id > 0 {
+        transform.Model = ModelTransformer(&d.Model)
+    }*/
+
+    // has many
+    /*if len(d.Models) > 0 {
+        for _, model := range d.Models {
+            transform.Models = append(transform.Models, ModelTransformer(&model))
+        }
+    }*/
+
+	return transform
+}
