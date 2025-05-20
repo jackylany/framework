@@ -1,0 +1,3 @@
+package parameter
+
+type {$ctl}Req struct {}

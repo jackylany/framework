@@ -10,7 +10,7 @@ import (
 	"{$project}{$module}transformer"
 )
 
-// list
+// {$ctl}List list
 func {$ctl}List(c *gin.Context) {
 
 	req := &parameter.{$ctl}Req{}
@@ -74,7 +74,7 @@ func {$ctl}List(c *gin.Context) {
 	})
 }
 
-// item
+// {$ctl}Item item
 func {$ctl}Item(c *gin.Context) {
 
 	req := &parameter.{$ctl}Req{}
@@ -108,7 +108,7 @@ func {$ctl}Item(c *gin.Context) {
 	})
 }
 
-// create
+// {$ctl}Create create
 func {$ctl}Create(c *gin.Context) {
 
 	req := &parameter.{$ctl}Req{}
@@ -138,7 +138,7 @@ func {$ctl}Create(c *gin.Context) {
 	})
 }
 
-// update
+// {$ctl}Update update
 func {$ctl}Update(c *gin.Context) {
 
 	req := &parameter.{$ctl}Req{}
@@ -185,7 +185,7 @@ func {$ctl}Update(c *gin.Context) {
 	})
 }
 
-// delete
+// {$ctl}Delete delete
 func {$ctl}Delete(c *gin.Context) {
 
 	req := &parameter.{$ctl}Req{}

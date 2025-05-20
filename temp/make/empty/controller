@@ -1,0 +1,17 @@
+package controller
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+// {$ctl}List list
+func {$ctl}List(c *gin.Context) {}
+
+// {$ctl}Item item
+func {$ctl}Item(c *gin.Context) {}
+
+// {$ctl}Update update
+func {$ctl}Update(c *gin.Context) {}
+
+// {$ctl}Delete delete
+func {$ctl}Delete(c *gin.Context) {}

@@ -33,9 +33,14 @@ func (m *Controller) Make() {
 		return
 	}
 
+	m.projectName += "/"
+	if m.moduleName != "" {
+		m.moduleName += "/"
+	}
+
 	// replace
-	fileText := strings.Replace(temp, ProjectTempReplaceStr, m.projectName+"/", -1)
-	fileText = strings.Replace(fileText, ModuleTempReplaceStr, m.moduleName+"/", -1)
+	fileText := strings.Replace(temp, ProjectTempReplaceStr, m.projectName, -1)
+	fileText = strings.Replace(fileText, ModuleTempReplaceStr, m.moduleName, -1)
 	fileText = strings.Replace(fileText, CtlTempReplaceStr, m.ctlName, -1)
 	fileText = strings.Replace(fileText, ModelTempReplaceStr, m.modelName, -1)
 
@@ -57,14 +62,6 @@ func (m *Controller) parseName() {
 	nameArr := strings.Split(m.Name, "/")
 	if len(nameArr) <= 0 {
 		log.Printf("[%s] is empty", m.Name)
-		return
-	}
-	if len(nameArr) == 1 {
-		m.projectName = ""
-		m.moduleName = ""
-		m.ctlName = strFirstToUpper(m.Name)
-		m.modelName = fmt.Sprintf("%ss", m.ctlName)
-		m.filename = fmt.Sprintf("./%s.go", m.Name)
 		return
 	}
 

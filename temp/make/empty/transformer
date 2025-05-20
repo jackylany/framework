@@ -1,0 +1,15 @@
+package transformer
+
+import (
+	"{$project}{$module}model"
+	"time"
+)
+
+type {$ctl}Transform struct {}
+
+func {$ctl}Transformer(d *model.{$model}) *{$ctl}Transform {
+
+	transform := &{$ctl}Transform{}
+	return transform
+
+}

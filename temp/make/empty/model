@@ -1,0 +1,8 @@
+package model
+
+type {$ctl}s struct {}
+
+// custom table name
+func ({$ctl}s) TableName() string {
+	return "{$table}s"
+}
